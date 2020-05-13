@@ -1,7 +1,7 @@
 {
-  "name": "mediaelement",
+  "name": "@akryum/mediaelement",
   "license": "MIT",
-  "version": "4.2.16",
+  "version": "4.3.1",
   "main": "full.js",
   "repository": {
     "type": "git",
@@ -11,6 +11,9 @@
     "url": "https://github.com/mediaelement/mediaelement/issues?q=is%3Aissue+is%3Aopen+label%3ABug"
   },
   "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "autoprefixer": "^6.7.7",
     "babel-cli": "^6.24.1",
