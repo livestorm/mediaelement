@@ -5062,17 +5062,17 @@ var MediaElementPlayer = function () {
 	}, {
 		key: 'play',
 		value: function play() {
-			this.proxy.play();
+			return this.proxy.play();
 		}
 	}, {
 		key: 'pause',
 		value: function pause() {
-			this.proxy.pause();
+			return this.proxy.pause();
 		}
 	}, {
 		key: 'load',
 		value: function load() {
-			this.proxy.load();
+			return this.proxy.load();
 		}
 	}, {
 		key: 'setCurrentTime',
@@ -5344,12 +5344,12 @@ var DefaultPlayer = function () {
 	_createClass(DefaultPlayer, [{
 		key: 'play',
 		value: function play() {
-			this.media.play();
+			return this.media.play();
 		}
 	}, {
 		key: 'pause',
 		value: function pause() {
-			this.media.pause();
+			return this.media.pause();
 		}
 	}, {
 		key: 'load',
