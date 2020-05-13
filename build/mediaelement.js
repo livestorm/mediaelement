@@ -882,11 +882,13 @@ var MediaElement = function MediaElement(idOrNode, options, sources) {
 						}
 					});
 				}
+				return response;
 			} else {
-				t.mediaElement.renderer[methodName](args);
+				return t.mediaElement.renderer[methodName](args);
 			}
 		} catch (e) {
 			t.mediaElement.generateError(e, mediaFiles);
+			throw e;
 		}
 	},
 	    assignMethods = function assignMethods(methodName) {
