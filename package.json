@@ -1,7 +1,7 @@
 {
   "name": "@akryum/mediaelement",
   "license": "MIT",
-  "version": "4.3.5",
+  "version": "4.3.6",
   "main": "full.js",
   "repository": {
     "type": "git",
