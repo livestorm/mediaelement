@@ -1496,9 +1496,9 @@ Object.assign(_player2.default.prototype, {
 		play.innerHTML = '<button type="button" aria-controls="' + t.id + '" title="' + playTitle + '" aria-label="' + pauseTitle + '" tabindex="0"></button>';
 		play.addEventListener('click', function () {
 			if (t.paused) {
-				t.play();
+				t.play(true);
 			} else {
-				t.pause();
+				t.pause(true);
 			}
 		});
 
@@ -1615,7 +1615,7 @@ Object.assign(_player2.default.prototype, {
 					var newTime = Math.max(player.currentTime - player.options.defaultSeekBackwardInterval(player), 0);
 
 					if (!player.paused) {
-						player.pause();
+						player.pause(true);
 					}
 
 					setTimeout(function () {
@@ -1623,7 +1623,7 @@ Object.assign(_player2.default.prototype, {
 					}, 0);
 
 					setTimeout(function () {
-						player.play();
+						player.play(true);
 					}, 0);
 				}
 			}
@@ -1645,7 +1645,7 @@ Object.assign(_player2.default.prototype, {
 					var newTime = Math.min(player.currentTime + player.options.defaultSeekForwardInterval(player), player.duration);
 
 					if (!player.paused) {
-						player.pause();
+						player.pause(true);
 					}
 
 					setTimeout(function () {
@@ -1653,7 +1653,7 @@ Object.assign(_player2.default.prototype, {
 					}, 0);
 
 					setTimeout(function () {
-						player.play();
+						player.play(true);
 					}, 0);
 				}
 			}
@@ -1822,7 +1822,7 @@ Object.assign(_player2.default.prototype, {
 			}
 			if (t.forcedHandlePause) {
 				t.slider.focus();
-				t.play();
+				t.play(true);
 			}
 			t.forcedHandlePause = false;
 		};
@@ -1889,9 +1889,9 @@ Object.assign(_player2.default.prototype, {
 					case 32:
 						if (_constants.IS_FIREFOX) {
 							if (t.paused) {
-								t.play();
+								t.play(true);
 							} else {
-								t.pause();
+								t.pause(true);
 							}
 						}
 						return;
@@ -1902,7 +1902,7 @@ Object.assign(_player2.default.prototype, {
 				seekTime = seekTime < 0 || isNaN(seekTime) ? 0 : seekTime >= duration ? duration : Math.floor(seekTime);
 				lastKeyPressTime = new Date();
 				if (!startedPaused) {
-					player.pause();
+					player.pause(true);
 				}
 
 				setTimeout(function () {
@@ -1932,7 +1932,7 @@ Object.assign(_player2.default.prototype, {
 				if (t.getDuration() !== Infinity) {
 					if (e.which === 1 || e.which === 0) {
 						if (!t.paused) {
-							t.pause();
+							t.pause(true);
 							t.forcedHandlePause = true;
 						}
 
@@ -2800,7 +2800,7 @@ Object.assign(_player2.default.prototype, {
 
 				t.media.setCurrentTime(parseFloat(self.value));
 				if (t.media.paused) {
-					t.media.play();
+					t.media.play(true);
 				}
 			});
 		}
@@ -3615,12 +3615,11 @@ var config = exports.config = {
 	keyActions: [{
 		keys: [32, 179],
 		action: function action(player) {
-
 			if (!_constants.IS_FIREFOX) {
 				if (player.paused || player.ended) {
-					player.play();
+					player.play(true);
 				} else {
-					player.pause();
+					player.pause(true);
 				}
 			}
 		}
@@ -4063,11 +4062,11 @@ var MediaElementPlayer = function () {
 							    pressed = button.getAttribute('aria-pressed');
 
 							if (t.paused && pressed) {
-								t.pause();
+								t.pause(true);
 							} else if (t.paused) {
-								t.play();
+								t.play(true);
 							} else {
-								t.pause();
+								t.pause(true);
 							}
 
 							button.setAttribute('aria-pressed', !pressed);
@@ -4688,9 +4687,9 @@ var MediaElementPlayer = function () {
 				layer.addEventListener('click', function (e) {
 					if (t.options.clickToPlayPause) {
 						if (t.paused) {
-							t.play();
+							t.play(true);
 						} else {
-							t.pause();
+							t.pause(true);
 						}
 
 						e.preventDefault();
@@ -4912,9 +4911,9 @@ var MediaElementPlayer = function () {
 					    pressed = button.getAttribute('aria-pressed');
 
 					if (t.paused) {
-						t.play();
+						t.play(true);
 					} else {
-						t.pause();
+						t.pause(true);
 					}
 
 					button.setAttribute('aria-pressed', !!pressed);
@@ -5062,11 +5061,17 @@ var MediaElementPlayer = function () {
 	}, {
 		key: 'play',
 		value: function play() {
+			var userInteraction = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+			this.playUserInteraction = userInteraction;
 			return this.proxy.play();
 		}
 	}, {
 		key: 'pause',
 		value: function pause() {
+			var userInteraction = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+			this.pauseUserInteraction = userInteraction;
 			return this.proxy.pause();
 		}
 	}, {
