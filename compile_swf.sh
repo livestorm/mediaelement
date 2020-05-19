@@ -11,7 +11,7 @@
 #   The file must be placed in flex_sdk_4.6/frameworks/libs/player/10.1/playerglobal.swc
 
 flex_path="./src/flash/flex_sdk_4.6"
-target_version="10.1"
+target_version="32.0"
 
 
 
