@@ -39,12 +39,17 @@ class MediaElement {
 			 * Name of MediaElement container
 			 * @type {String}
 			 */
-			fakeNodeName: 'mediaelementwrapper',
+			fakeNodeName: 'div',
 			/**
 			 * The path where shims are located
 			 * @type {String}
 			 */
 			pluginPath: 'build/',
+			/**
+			 * The path where the icon sprite is located
+			 * @type {String}
+			 */
+			iconSprite: 'mejs-controls.svg',
 			/**
 			 * Flag in `<object>` and `<embed>` to determine whether to use local or CDN
 			 * Possible values: 'always' (CDN version) or 'sameDomain' (local files)

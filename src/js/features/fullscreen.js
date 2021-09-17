@@ -9,6 +9,7 @@ import * as Features from '../utils/constants';
 import {isString, createEvent} from '../utils/general';
 import {addClass, removeClass} from '../utils/dom';
 import {getTypeFromFile} from '../utils/media';
+import {generateControlButton} from '../utils/generate';
 
 
 /**
@@ -85,9 +86,8 @@ Object.assign(MediaElementPlayer.prototype, {
 			fullscreenTitle = isString(t.options.fullscreenText) ? t.options.fullscreenText : i18n.t('mejs.fullscreen'),
 			fullscreenBtn = document.createElement('div')
 		;
-
 		fullscreenBtn.className = `${t.options.classPrefix}button ${t.options.classPrefix}fullscreen-button`;
-		fullscreenBtn.innerHTML = `<button type="button" aria-controls="${t.id}" title="${fullscreenTitle}" aria-label="${fullscreenTitle}" tabindex="0"></button>`;
+		fullscreenBtn.innerHTML = generateControlButton(t.id, fullscreenTitle, fullscreenTitle, `${t.media.options.iconSprite}`, ['icon-fullscreen', 'icon-unfullscreen'], `${t.options.classPrefix}`);
 		t.addControlElement(fullscreenBtn, 'fullscreen');
 
 		fullscreenBtn.addEventListener('click', () => {
