@@ -5190,11 +5190,17 @@ var MediaElementPlayer = function () {
 	}, {
 		key: 'play',
 		value: function play() {
+			var userInteraction = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+			this.playUserInteraction = userInteraction;
 			return this.proxy.play();
 		}
 	}, {
 		key: 'pause',
 		value: function pause() {
+			var userInteraction = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+			this.pauseUserInteraction = userInteraction;
 			return this.proxy.pause();
 		}
 	}, {
