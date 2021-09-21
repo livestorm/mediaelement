@@ -1620,7 +1620,7 @@ Object.assign(_player2.default.prototype, {
 					}
 
 					setTimeout(function () {
-						player.setCurrentTime(newTime);
+						player.setCurrentTime(newTime, true);
 					}, 0);
 
 					setTimeout(function () {
@@ -1650,7 +1650,7 @@ Object.assign(_player2.default.prototype, {
 					}
 
 					setTimeout(function () {
-						player.setCurrentTime(newTime);
+						player.setCurrentTime(newTime, true);
 					}, 0);
 
 					setTimeout(function () {
@@ -1817,7 +1817,7 @@ Object.assign(_player2.default.prototype, {
 		},
 		    handleMouseup = function handleMouseup() {
 			if (mouseIsDown && t.getCurrentTime() !== null && t.newTime.toFixed(4) !== t.getCurrentTime().toFixed(4)) {
-				t.setCurrentTime(t.newTime);
+				t.setCurrentTime(t.newTime, true);
 				t.setCurrentRailHandle(t.newTime);
 				t.updateCurrent(t.newTime);
 			}
@@ -1907,7 +1907,7 @@ Object.assign(_player2.default.prototype, {
 				}
 
 				setTimeout(function () {
-					t.setCurrentTime(seekTime);
+					t.setCurrentTime(seekTime, true);
 				}, 0);
 
 				if (seekTime < t.getDuration() && !startedPaused) {
@@ -5083,6 +5083,9 @@ var MediaElementPlayer = function () {
 	}, {
 		key: 'setCurrentTime',
 		value: function setCurrentTime(time) {
+			var userInteraction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+			this.seekUserInteraction = userInteraction;
 			this.proxy.setCurrentTime(time);
 		}
 	}, {
