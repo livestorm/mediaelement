@@ -2,13 +2,14 @@
 
 * [Development](#development)
 	* [General Conventions](#development)
+	* [Project Struture](#structure)
 	* [Renderers](#renderers)
 	* [Translations](#translations)
 	* [A word on `ES6` for Renderers](#es6)
 	* [CSS](#css)
 * [Node.js](#nodejs)
-* [(Adobe / Apache) Flex SDK](#flex)
 * [Building with Grunt](#building)
+* [Make changes to the website](#website)
 
 <a id="development"></a>
 ## Development
@@ -19,31 +20,47 @@
 * **ALWAYS** make changes to the files in the `/src/` directory, and **NEVER** in `/build/` directory. This is with the sole purpose of facilitating the merging (and further, the compiling) operation, and help people to see changes more easily.
 * Make sure you download the necessary media files from https://github.com/mediaelement/mediaelement-files and place them inside the `/media/` directory.
 * Use [JSDoc](http://usejsdoc.org/) conventions to document code. This facilitates the contributions of other developers and ensures more quality in the product.
-
-<a id="features"></a>
-### Features
-
-```html
-<script src="jquery.js"></script>
-<script src="mediaelement-and-player.min.js"></script>
-<link rel="stylesheet" href="mediaelementplayer.css" />
-<script src="mejs-feature-[feature_name].js"></script>
-
-<video id="player1" width="320" height="240"></video>
-
-<script>
-$(document).ready(function() {
-
-	// create player
-	$('#player1').mediaelementplayer({
-		// add desired features in order
-		features: ['playpause','[feature_name]','current','progress','duration','volume']
-	});
-});
-</script>
-```
+* If you would like to contribute with translations, make sure that you also check https://github.com/mediaelement/mediaelement-plugins, and perform the
+ translations for the files suffixed as `-i18n`.
 
 As a final note, try to be aware of building it thinking on Accessibility. Take a look into [`mediaelementplayer-feature-tracks.js`](src/js/mediaelementplayer-feature-tracks.js) for more reference about best practices.
+
+<a id="structure"></a>
+### Project Structure
+
+* `/build` files that are generated when building the project (should only be committed when creating a new release).
+* `/demo` files for testing the library.
+* `/docs` additional documentation for the project.
+* `/media` empty folder to import big files into, see https://github.com/mediaelement/mediaelement-files.
+* `/src` source folder for all css and js files.
+  * `/css` source css files.
+    * `mediaelementplayer.css` default css styles.
+    * `mediaelementplayer-legacy.css` old legacy css styles.
+    * `mejs-controls.svg` svg-spritemap with all icons.
+  * `/js` source js files.
+    * `/core` core functionality of this library.
+      * `i18n.js` support for multiple languages, does only the setup, the actual strings are in the `languages` folder.
+      * `mediaelement.js` creates the `window.mejs.MediaElement` object and default video / audio setup.
+      * `mejs.js` creates the `window.mejs` object and basic `html5` settings.
+      * `renderer.js` creates the `window.Renderers` object and decides which renderer to use.
+    * `/features` all the controlbar features of the player.
+      * `fullscreen.js` creates the fullscreen button.
+      * `playpause.js` creates the play/pause button.
+      * `progress.js` creates the progressbar elements.
+      * `time.js` creates the duration time text.
+      * `tracks.js` creates the close-captions button.
+      * `volume.js` creates the volume button and slider.
+    * `/languages` folder with a file for every language supported.
+    * `/player`
+      * `default.js` creates the `window.mejs.DefaultPlayer` object with all the basic functionality like `play/pause`.
+      * `library.js` initiate `mediaelementplayer()` if it's used with another library as plugin
+      or after document-`ready` event.
+    * `/renderers` all the additional renderers for this library.
+    * `/utils` utility functions for many different functionalities.
+    * `header.js` the comment header of the library.
+    * `player.js` creates the `window.mejs.MediaElementPlayer` object and creates and configures the UI and 
+    functionality for the player itself.
+* `/test` mocha unit tests, which can be executed with `npm run test`.
 
 <a id="renderers"></a>
 ### Renderers
@@ -317,9 +334,6 @@ if (mejs.i18n.[lang] === undefined) {
 	mejs.i18n.[lang] = {
 		"mejs.plural-form": [Number],
 
-		// renderers/flash.js
-		"mejs.install-flash": "",
-
 		// features/fullscreen.js
 		"mejs.fullscreen": "",
 
@@ -430,21 +444,6 @@ Since `MediaElement.js` uses [Grunt](http://gruntjs.com/) to compile it, Node.js
 
 Once installed, at the command prompt, type `npm install`, which will download all the necessary tools.
 
-<a id="flex"></a>
-## (Adobe / Apache) Flex SDK
-
-One of the subtasks involved during the compiling of `MediaElement.js` is the compiling of the Flash files. In order to do it, Flex SDK needs to be installed.
-
-1. Make sure your version of Java is **1.5 or later** since Flex compilers are 32-bit executables and cannot launch 64-bit processes; otherwise, you will receive the error ```This Java instance does not support a 32-bit JVM.Please install the desired version```. For more information about this topic, read [Adobe's JVM Configuration](http://help.adobe.com/en_US/flex/using/WS2db454920e96a9e51e63e3d11c0bf69084-7fd9.html#WS2db454920e96a9e51e63e3d11c0bf5fb32-7ff3).
-2. Download the free (Flex SDK from http://www.adobe.com/devnet/flex/flex-sdk-download.html or http://flex.apache.org/download-binaries.html
-2. Unzip it to a directory on your local machine (eg: ```/usr/local/flex_sdk_4.6```)
-3. Create a symlink from the install location to this directory (eg: ```ln -s /usr/local/flex_sdk_4.6 /path/to/mediaelement/src/flash```)
-4. If you do not have the required player global swc file (version **10.1**), download it from https://helpx.adobe.com/flash-player/kb/archived-flash-player-versions.html and place it inside ```/path/to/flex_sdk_4.6/frameworks/libs/player/10.1/playerglobal.swc```
-
-If, during development, only the ActionScript files were affected, type `sh compile_swf.sh` and it will build the compiled files in `/local-build/` directory. Then just copy the files and put them inside `/build/` directory.
-
-Or, simply, type in Terminal `grunt shell` to create all the SWF files in the right place.
-
 <a id="building"></a>
 ## Building with Grunt
 
@@ -464,5 +463,9 @@ For example:
 # This will build a bundle with `HLS` and `DASH` renderers ONLY, plus all the default player features
 grunt --renderers=hls,dash
 ```
+
+<a id="website"></a>
+## Website
+* If you want to change the Website www.mediaelementjs.com, you have to switch to the `gh-pages` branch and make changes there. A `github-action` will deploy the code automatically.
 ________
 [Back to Main](../README.md)
