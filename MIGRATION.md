@@ -1,5 +1,22 @@
 # Migration Guide
 
+## Migrating from `6.x` to `7.x` version
+
+* Flash support removed. If you want to use flash you have to use version 6 or below.
+* `stop()` function was removed, because if was only implemented for flash, use `pause()` instead.
+* Removed `shimScriptAccess` and `pluginPath` settings, because if was only implemented for flash, so you can remove these settings.
+
+## Migrating from `5.x` to `6.x` version
+
+Version 6.0.0 removed the custom subtitle parsing in favor of browser native support which has greatly improved over the
+last years. VTT subtitles can be used for styled subtitles (using the ::cue CSS selector) and positioning etc. For a 
+list of currently supported features, please refer to https://developer.mozilla.org/en-US/docs/Web/API/WebVTT_API#browser_compatibility.
+
+* The support for "slides"-tracks was removed as it was non-functional in the last versions and is not natively supported. If you need this feature you can add a "metadata" track and add custom logic to display the data therein.
+* "tracksAriaLive", "captionTextPreprocessor", "slidesSelector" options are no longer used and can be removed
+* "startLanguage" option was renamed to "autoplayCaptionLanguage"
+
+
 ## Migrating from `4.x` to `5.x` version
 
 In order to successfully install `5.x` in an existing setup, you must consider the following guidelines:

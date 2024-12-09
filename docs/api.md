@@ -17,7 +17,7 @@
 
 Attribute | Description
 -------- | ------------
-autoplay |	Specifies that the video will start playing as soon as it is ready
+autoplay |	Specifies that the video will start playing as soon as it is ready. [Make sure to follow autoplay policies.](#autoplay)
 class | Specifies one or more class names for an element (refers to a class in a style sheet)
 controls | Specifies that video controls should be displayed (such as a play/pause button etc).
 id | Specifies a unique id for an element; if not specified, the plugin will create one automatically
@@ -41,6 +41,10 @@ The following markup displays all the attributes listed above for more clarity:
 </video>
 ```
 
+<a id="autoplay"></a>
+### Autoplay
+`autoplay` policies have changed. You may experience an error if you try to execute `play` programmatically or via `autoplay` attribute with MediaElement, unless `muted` attribute is specified: https://developer.mozilla.org/en-US/docs/Web/Media/Autoplay_guide
+
 <a id="configuration"></a>
 ## Configuration
 
@@ -52,16 +56,13 @@ As a standalone library, _MediaElement.js_ can be configured using the following
 Parameter | Type | Default | Description
 ------ | --------- | ------- | --------
 renderers | array | `[]` | List of the renderers to use
-fakeNodeName | string | `mediaelementwrapper` | Name of MediaElement container
-pluginPath | string | `build/` | Path where Flash shims are located
+fakeNodeName | string | `div` | Name of MediaElement container
 iconSprite | string | `mejs-controls.svg` | Path and file for svg icon sprite
-shimScriptAccess | string | `sameDomain` | Flag in `<object>` and `<embed>` to determine whether to use local or CDN files. Possible values: `always` (CDN version) or `sameDomain` (local files)
 success | callback | | Action(s) that will be executed as soon as the source is loaded; passes 2 arguments: `media` (the wrapper that mimics all the native events/properties/methods for all renderers) and `node` (the original HTML `video`, `audio` or `iframe` tag where the media was loaded originally; if `html5` is being used, `media` and `node` are the basically the same)
 error | callback | | Action(s) that will be executed if source doesn't load for any reason. Passes same arguments as `success`
 dailymotion | object | | See [Documentation](https://developer.dailymotion.com/player)
 dash | object | | Accepts `debug`, `drm` (object to load protected/licensed streaming; read [here](https://github.com/Axinom/drm-quick-start) for more information) and `path` parameters to indicate `dash.js` URL/local path
 facebook | object | | See [Documentation](https://developers.facebook.com/docs/plugins/embedded-video-player/api#setup) (and a custom `lang` parameter to indicate the FB SDK language)
-flv | object | | See [Documentation](https://github.com/Bilibili/flv.js/blob/master/docs/api.md) (and a custom `path` parameter to indicate where to load library)
 hls | object | | See [Documentation](https://github.com/dailymotion/hls.js/blob/master/API.md#fine-tuning) (and a custom `path` parameter to indicate where to load library)
 youtube | object | | See [Documentation](https://developers.google.com/youtube/player_parameters#Parameters); also, a custom `nocookie` parameter to switch to YouTube's no-cookie URL and `imageQuality` parameter if user decides to use Image API to load a YouTube poster based on YouTube video ID (possible values: `default`, `hqdefault`, `mqdefault`, `sddefault` and `maxresdefault`)
 
@@ -132,12 +133,12 @@ audioVolume | string | `horizontal` | Position of volume slider on audio element
 videoVolume | string | `vertical` | Position of volume slider on video element
 usePluginFullScreen | boolean | `true` | Flag to activate detection of Pointer events when on fullscreen mode
 useFakeFullscreen | boolean | `false` | Flag to bypass native capabilities on mobile devices and use the fake-fullscreen mode
-tracksAriaLive | boolean | `false` | By default, no WAI-ARIA live region - don't make a screen reader speak captions over an audio track.
 hideCaptionsButtonWhenEmpty | boolean | `true` | Option to remove the `[cc]` button when no `<track kind="subtitles">` are present
-captionTextPreprocessor | function | _not set_ | Option to preprocess the caption text before it is displayed. If set, it expects a function which takes in caption text and returns a preprocessed version thereof. If it is not set, the caption text is displayed as is.
 toggleCaptionsButtonWhenOnlyOne | boolean | `false` | If true and we only have one track, change captions to toggle button
-startLanguage | string | _(empty)_ | Automatically turn on a `<track>` element. Note: Will not work when toggleCaptionsButtonWhenOnlyOne is set to `true`
-slidesSelector | string | _(empty)_ | Selector for slides; could be any valid JavaScript selector (`#id`, `.class`, `img`, etc.)
+defaultTrackLine | number/boolean | -3 | Default cue line in which to display cues if the cue is set to "auto" (no line entry in VTT). Can be set to `false` to disable.  
+autoplayCaptionLanguage | string | `null` | Automatically turn on a subtitles/captions of the corresponfing language; overrides "default" attribute on track element.
+chaptersLanguage | string | `null` | Set the language of the chapters track. If only one chapter track exists it will always be used. If multiple chapter tracks exist the player will try to find one using `chaptersLanguage` or the current player language. If none is found the first one defined will be used for the chapter display.
+hideScreenReaderTitle | boolean | false | Hide the video player screen reader title so it can be added by the website
 tracksText | string | `null` | Title for Closed Captioning button for WARIA purposes
 chaptersText  | string | `null` | Title for Chapters button for WARIA purposes
 muteText | string | `null` | Title for Mute button for WARIA purposes
@@ -150,8 +151,6 @@ pauseText | string | `null` | Title for Play/Pause button for WARIA purposes whe
 
 <a id="api"></a>
 ## API
-
-MediaElementPlayer is a complete audio and video player, but you can also use just the MediaElement object which replaces `<video>` and `<audio>` with a Flash player that mimics the properties, methods, and events of HTML MediaElement API.
 
 <a id="properties"></a>
 ### Properties
@@ -172,6 +171,7 @@ readyState | Return the current ready state of the audio/video | X |
 seeking | Return whether the user is currently seeking in the audio/video | X |
 src | Set or return the current source of the audio/video element | X | X
 volume | Set or return the volume of the audio/video | X | X
+seekUserInteraction | Returns whether the last seek call was initiated from user interaction | X | X
 
 <a id="methods"></a>
 ### Methods
@@ -181,13 +181,12 @@ Method | Description
 load() | Reload the audio/video element; also, it is used to update the audio/video element after changing the source or other settings
 play() | Start playing the audio/video
 pause() | Halt (pauses) the currently playing audio or video
-stop() | **Only** present to support Flash RTMP streaming in MediaElementPlayer. The equivalent for other scenarios is `pause`
 remove() | Destroy the video/audio player instance
 canPlayType(type) | Determine whether current player can/cannot play a specific media type; `type` is MIME type and each renderer has a whitelist of them
 setPlayerSize (width, height) | Set player's `width` and `height` also considering the `stretching` configuration
 setPoster (url) | Add a `image` tag with the poster's `url` inside the player's layer; you can pass an _empty_ string to clear the poster 
 setMuted (muted) | Mute/unmute the player; `muted` is a boolean value
-setCurrentTime (time) | Set a new current time for the player; `time` is either an integer or float number, and if negative, it will start from zero.
+setCurrentTime (time, userInteraction) | Set a new current time for the player; `time` is either an integer or float number, and if negative, it will start from zero.
 getCurrentTime () | Retrieve the current time of the media being played
 setVolume (volume) | Set a volume level for the player; `volume` is a number between `0` and `1`
 getVolume () | Retrieve the current volume level of the media being played
